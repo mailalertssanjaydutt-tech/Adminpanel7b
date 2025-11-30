@@ -74,6 +74,7 @@ exports.deleteGroup = async (req, res) => {
   }
 };
 
+const moment = require("moment-timezone");
 const Chart = require("../models/Chart");
 
 exports.getGroupByName = async (req, res) => {
@@ -85,48 +86,52 @@ exports.getGroupByName = async (req, res) => {
 
     if (!group) return res.status(404).json({ error: "Group not found" });
 
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+    // Use proper India timezone
+    const now = moment().tz("Asia/Kolkata");
+    const yesterday = now.clone().subtract(1, "day");
 
     const gamesWithNumbers = await Promise.all(
       group.games.map(async (game) => {
         const todayChart = await Chart.findOne({
           game: game._id,
-          year: today.getFullYear(),
-          month: today.getMonth() + 1,
+          year: now.year(),
+          month: now.month() + 1,
         }).lean();
 
         const yesterdayChart = await Chart.findOne({
           game: game._id,
-          year: yesterday.getFullYear(),
-          month: yesterday.getMonth() + 1,
+          year: yesterday.year(),
+          month: yesterday.month() + 1,
         }).lean();
 
-        // Yesterday number
+        // Yesterday number (null if missing)
         const yesterdayNumber =
-          yesterdayChart?.numbers?.[yesterday.getDate() - 1] || "--";
+          yesterdayChart?.numbers?.[yesterday.date() - 1] ?? null;
 
-        // Today number only if resultTime is passed
+        // --- TODAY NUMBER LOGIC ---
         let todayNumber = null;
-        if (todayChart?.numbers && game.resultTime) {
-          const [hours, minutes] = game.resultTime.split(":").map(Number);
 
-          const resultDateTime = new Date(today);
-          resultDateTime.setHours(hours, minutes, 0, 0);
+        if (game.resultTime) {
+          // Build today's result time (in IST)
+          const resultDateTime = moment.tz(
+            `${now.format("YYYY-MM-DD")} ${game.resultTime}`,
+            "YYYY-MM-DD HH:mm",
+            "Asia/Kolkata"
+          );
 
-          if (today >= resultDateTime) {
-            todayNumber = todayChart.numbers[today.getDate() - 1] || "--";
+          // If result time is passed, show today's number
+          if (now.isSameOrAfter(resultDateTime)) {
+            todayNumber = todayChart?.numbers?.[now.date() - 1] ?? null;
+          } else {
+            todayNumber = null; // waiting
           }
         }
 
         // Convert resultTime to 12-hour format
         let resultTime12h = null;
         if (game.resultTime) {
-          let [h, m] = game.resultTime.split(":").map(Number);
-          const ampm = h >= 12 ? "PM" : "AM";
-          h = h % 12 || 12; // Convert 0 to 12 for midnight
-          resultTime12h = `${h}:${m.toString().padStart(2, "0")} ${ampm}`;
+          const [h, m] = game.resultTime.split(":");
+          resultTime12h = moment(`${h}:${m}`, "HH:mm").format("h:mm A");
         }
 
         return {
@@ -139,6 +144,7 @@ exports.getGroupByName = async (req, res) => {
     );
 
     res.json({ name: group.name, games: gamesWithNumbers });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch group" });
