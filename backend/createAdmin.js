@@ -8,20 +8,19 @@ const createAdmin = async () => {
   try {
     await connectDB();
 
-    const adminExists = await User.findOne({ email: "admin@example.com" });
+    const adminExists = await User.findOne({ email: "admin@7bsatta.com" });
     if (adminExists) {
       console.log("Admin user already exists!");
       process.exit();
     }
 
     const admin = await User.create({
-      email: "admin@example.com",
+      email: "admin@7bsatta.com",
       password: "admin123", // You can change this password
     });
 
     console.log("Admin user created successfully!");
     console.log(`Email: ${admin.email}`);
-    console.log(`Password: admin123`);
     process.exit();
   } catch (err) {
     console.error("Error creating admin:", err);

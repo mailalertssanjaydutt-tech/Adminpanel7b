@@ -71,7 +71,6 @@ exports.postResult = async (req, res) => {
 };
 
 // DELETE a result (clear a day's value)
-// Expecting params: gameId, resultId where resultId === `${chartId}-${dayIndex}`
 exports.deleteResult = async (req, res) => {
   try {
     const { gameId, resultId } = req.params;
