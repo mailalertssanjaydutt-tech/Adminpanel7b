@@ -1,6 +1,3 @@
-// Updated ManageChart component with bigger edit button and improved alignment
-// Only allowed changes: edit button size increased and alignment fixed
-
 import React, { useState, useEffect } from "react";
 import {
   Loader2,
@@ -29,25 +26,50 @@ export default function ManageChart() {
 
   const getDaysInMonth = (y, m) => new Date(y, m, 0).getDate();
 
-  useEffect(() => {
-    let mounted = true;
-    const fetchGames = async () => {
-      setLoadingGames(true);
-      try {
-        const res = await api.get("/games");
-        if (!mounted) return;
-        setGames(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch games");
-        setGames([]);
-      } finally {
-        if (mounted) setLoadingGames(false);
-      }
-    };
-    fetchGames();
-    return () => (mounted = false);
-  }, []);
+ useEffect(() => {
+  let mounted = true;
+
+  const toDate = (time) => new Date(`1970-01-01T${time}`);
+
+  const to12Hour = (time) => {
+    const [hour, minute] = time.split(":").map(Number);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const hr = hour % 12 || 12;
+    return `${hr}:${minute.toString().padStart(2, "0")} ${ampm}`;
+  };
+
+  const fetchGames = async () => {
+    setLoadingGames(true);
+    try {
+      const res = await api.get("/games");
+      if (!mounted) return;
+
+      // Ensure array
+      const list = Array.isArray(res.data) ? [...res.data] : [];
+
+      // Sort by time
+      list.sort((a, b) => toDate(a.resultTime) - toDate(b.resultTime));
+
+      // Add 12-hr formatted time
+      const result = list.map((g) => ({
+        ...g,
+        resultTime12: g.resultTime ? to12Hour(g.resultTime) : "",
+      }));
+
+      setGames(result);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch games");
+      setGames([]);
+    } finally {
+      if (mounted) setLoadingGames(false);
+    }
+  };
+
+  fetchGames();
+  return () => (mounted = false);
+}, []);
+
 
   useEffect(() => {
     if (!selectedGame) {
@@ -152,7 +174,7 @@ export default function ManageChart() {
                 <option value="">{loadingGames ? "Loading games..." : "Select Game"}</option>
                 {games.map((g) => (
                   <option key={g._id} value={g._id}>
-                    {g.name} {g.resultTime ? `— ${g.resultTime}` : ""}
+                  {g.name} {g.resultTime12 ? `— ${g.resultTime12}` : ""}
                   </option>
                 ))}
               </select>
