@@ -1,3 +1,6 @@
+// Updated ManageChart component with bigger edit button and improved alignment
+// Only allowed changes: edit button size increased and alignment fixed
+
 import React, { useState, useEffect } from "react";
 import {
   Loader2,
@@ -128,7 +131,7 @@ export default function ManageChart() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50/40 to-white py-4 sm:py-6 px-3 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto"> {/* widened from 6xl to 7xl to remove right blank space */}
         <header className="mb-4 sm:mb-6">
           <h1 className="text-indigo-900 font-extrabold text-xl sm:text-2xl lg:text-3xl">
             Manage Monthly Chart
@@ -244,15 +247,14 @@ export default function ManageChart() {
                               </button>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3"> {/* aligned and spaced */}
                               <span className={`font-semibold text-sm ${numObj.value ? "text-emerald-700" : "text-gray-400"}`}>
                                 {numObj.value || "-"}
                               </span>
                               <button
                                 onClick={() => setEditingIndex(idx)}
-                                className="p-1 rounded bg-indigo-100 hover:bg-indigo-200 text-indigo-700"
-                              >
-                                <Edit2 className="w-4 h-4" />
+                                className="p-2 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-700" /* Bigger button */>
+                                <Edit2 className="w-5 h-5" /> {/* Bigger icon */}
                               </button>
                             </div>
                           )}
