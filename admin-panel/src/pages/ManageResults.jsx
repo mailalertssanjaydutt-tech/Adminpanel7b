@@ -1,8 +1,3 @@
-// Updated ManageResults.jsx
-// Actions column removed
-// Declared Time column removed
-// No Framer Motion used
-
 import React, { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -26,14 +21,27 @@ export default function ManageResults() {
         const res = await api.get("/games");
         if (!mounted) return;
         // setGames(res.data?.games || res.data || []);
+
         const list = res.data?.games || res.data || [];
 
-// Sort by resultTime (12 AM → 11:59 PM)
-list.sort((a, b) => {
-  const t1 = new Date(`1970-01-01 ${a.resultTime}`);
-  const t2 = new Date(`1970-01-01 ${b.resultTime}`);
-  return t1 - t2;
-});
+// Helper: convert "HH:MM" → Date
+const toDate = (time) => new Date(`1970-01-01T${time}`);
+
+// Helper: convert "HH:MM" → "hh:mm AM/PM"
+const to12Hour = (time) => {
+  const [hour, minute] = time.split(":").map(Number);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const hr = hour % 12 || 12; 
+  return `${hr}:${minute.toString().padStart(2, "0")} ${ampm}`;
+};
+
+// Sort list by time
+list.sort((a, b) => toDate(a.resultTime) - toDate(b.resultTime));
+
+// Convert resultTime to 12-hour format
+list.forEach(item => {
+  item.resultTime12 = to12Hour(item.resultTime);
+});     
 
 setGames(list);
 
