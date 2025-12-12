@@ -168,7 +168,7 @@ setGames(list);
                 <option value="">{loadingGames ? "Loading..." : "Select Game"}</option>
                 {games.map((g) => (
                   <option key={g._id} value={g._id}>
-                    {g.name} {g.resultTime ? `— ${g.resultTime}` : ""}
+                  {g.name} {g.resultTime12 ? `— ${g.resultTime12}` : ""}
                   </option>
                 ))}
               </select>
