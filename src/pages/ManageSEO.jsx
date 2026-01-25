@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 const siteOptions = [
   { label: "24x7sattaking", value: "24x7sattaking.com" },
-  { label: "24x7sattaking", value: "24x7sattaking.com" },
+  { label: "24x7satta", value: "24x7satta.com" },
   { label: "A7 Satta", value: "7asatta.com" },
   { label: "7B Satta", value: "7bsatta.com" },
 ];
@@ -340,3 +340,4 @@ export default function ManageSEO() {
     </div>
   );
 }
+
