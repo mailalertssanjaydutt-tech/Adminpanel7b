@@ -39,7 +39,7 @@ const siteOptions = [
   { label: "B7 Satta", value: "b7satta.vip" },
 ];
 
-export default function PremiumAdsEditor() {
+export default function CustomAdsEditor() {
   const [ads, setAds] = useState({ top: [], middle: [], bottom: [] });
   const [activeSection, setActiveSection] = useState("top");
   const [isSaving, setIsSaving] = useState(false);
@@ -919,7 +919,7 @@ export default function PremiumAdsEditor() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Premium Ads Editor</h1>
+          <h1 className="text-2xl font-bold"> Ads Editor</h1>
           <select
             className="mt-2 p-2 border rounded"
             value={site}
@@ -1081,3 +1081,4 @@ export default function PremiumAdsEditor() {
     </div>
   );
 }
+
