@@ -37,6 +37,8 @@ const siteOptions = [
   { label: "24x7Satta king", value: "24x7sattaking.com" },
   { label: "7b Satta", value: "7bsatta.com" },
   { label: "7a Satta", value: "7asatta.com" },
+  { label: "Lucky Satta 7", value: "lucky-satta7.com" },
+  { label: "E Satta", value: "e-satta.com" },
 ];
 
 export default function CustomAdsEditor() {

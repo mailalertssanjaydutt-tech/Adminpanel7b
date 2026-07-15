@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit2, PlusCircle, Loader2 } from "lucide-react";
+import { Edit2, PlusCircle, Loader2, Trash2 } from "lucide-react";
 import api from "../utils/api";
 import toast from "react-hot-toast";
 
@@ -68,6 +68,19 @@ export default function Game() {
     setFormLoading(false);
   };
 
+  const handleDeleteGame = async (id) => {
+    if (window.confirm("Are you sure you want to delete this game?")) {
+      try {
+        await api.delete(`/games/${id}`);
+        toast.success("Game deleted successfully!");
+        fetchGames();
+      } catch (err) {
+        console.error(err);
+        toast.error(err.response?.data?.error || "Error deleting game.");
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50/40 to-white py-4 sm:py-6 px-3 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -101,7 +114,7 @@ export default function Game() {
                       <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold whitespace-nowrap">#</th>
                       <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold whitespace-nowrap">Game Name</th>
                       <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold whitespace-nowrap">Result Time</th>
-                      <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold text-center whitespace-nowrap">Edit</th>
+                      <th className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold text-center whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -111,13 +124,22 @@ export default function Game() {
                         <td className="px-2 sm:px-4 lg:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm">{game.name}</td>
                         <td className="px-2 sm:px-4 lg:px-6 py-3 sm:py-4 text-xs sm:text-sm">{game.resultTime}</td>
                         <td className="px-2 sm:px-4 lg:px-6 py-3 sm:py-4 text-center">
-                          <button
-                            onClick={() => handleEditGame(game)}
-                            className="text-indigo-600 hover:text-indigo-800 transition-colors p-2 sm:p-3 hover:bg-indigo-100 rounded-xl"
-                            title="Edit Game"
-                          >
-                            <Edit2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                          </button>
+                          <div className="flex justify-center items-center gap-2">
+                            <button
+                              onClick={() => handleEditGame(game)}
+                              className="text-indigo-600 hover:text-indigo-800 transition-colors p-2 sm:p-3 hover:bg-indigo-100 rounded-xl"
+                              title="Edit Game"
+                            >
+                              <Edit2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteGame(game._id)}
+                              className="text-red-500 hover:text-red-700 transition-colors p-2 sm:p-3 hover:bg-red-50 rounded-xl"
+                              title="Delete Game"
+                            >
+                              <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

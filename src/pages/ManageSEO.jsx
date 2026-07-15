@@ -4,6 +4,8 @@ const siteOptions = [
   { label: "24x7satta", value: "24x7satta.com" },
   { label: "A7 Satta", value: "7asatta.com" },
   { label: "7B Satta", value: "7bsatta.com" },
+  { label: "Lucky Satta 7", value: "lucky-satta7.com" },
+  { label: "E Satta", value: "e-satta.com" },
 ];
 import api from "../utils/api";
 
